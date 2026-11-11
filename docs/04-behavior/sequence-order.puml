@@ -1,0 +1,33 @@
+
+@startuml
+title Диаграммаи пайдарпайии хариди чипта
+
+actor "Мизоҷ" as Client
+participant "Система" as System
+participant "Пойгоҳи додаҳо" as DB
+participant "Системаи пардохт" as Payment
+
+Client -> System: Воридшавӣ ба система
+System --> Client: Намоиши рӯйхати филмҳо
+
+Client -> System: Интихоби филм
+System -> DB: Ҷустуҷӯи филм
+DB --> System: Маълумоти филм
+
+Client -> System: Интихоби сеанс ва ҷой
+System -> DB: Санҷиши ҷойи холӣ
+DB --> System: Натиҷаи санҷиш
+
+Client -> System: Тасдиқи фармоиш
+System -> Payment: Ирсоли маълумоти пардохт
+Payment --> System: Натиҷаи пардохт
+
+alt Пардохт муваффақ аст
+    System -> DB: Сабти чипта
+    DB --> System: Тасдиқи сабт
+    System --> Client: Намоиши чиптаи электронӣ
+else Пардохт номуваффақ аст
+    System --> Client: Паёми хатогӣ
+end
+
+@enduml
