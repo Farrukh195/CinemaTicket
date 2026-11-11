@@ -1,0 +1,40 @@
+
+@startuml use-case
+left to right direction
+title Диаграммаи истифодаи системаи таксӣ
+
+actor "Мусофир" as Passenger
+actor "Ронанда" as Driver
+actor "Маъмур" as Admin
+
+rectangle "Системаи фармоиши таксӣ" {
+
+usecase "Бақайдгирӣ" as UC1
+usecase "Воридшавӣ ба система" as UC2
+usecase "Фармоиш додани таксӣ" as UC3
+usecase "Ҳисоб кардани нарх" as UC4
+usecase "Ҷустуҷӯи ронанда" as UC5
+usecase "Қабули фармоиш" as UC6
+usecase "Бекор кардани фармоиш" as UC7
+usecase "Анҷом додани сафар" as UC8
+usecase "Идоракунии истифодабарандагон" as UC9
+
+}
+
+Passenger --> UC1
+Passenger --> UC2
+Passenger --> UC3
+Passenger --> UC7
+
+Driver --> UC2
+Driver --> UC6
+Driver --> UC8
+
+Admin --> UC2
+Admin --> UC9
+
+UC3 ..> UC4 : <<include>>
+UC3 ..> UC5 : <<include>>
+UC7 ..> UC3 : <<extend>>
+
+@enduml
