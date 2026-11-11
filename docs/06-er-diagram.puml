@@ -1,0 +1,94 @@
+
+@startuml er-diagram
+title CinemaTicket - ER диаграммаи модели мантиқӣ
+
+hide circle
+skinparam linetype ortho
+skinparam entity {
+    BackgroundColor White
+    BorderColor Black
+}
+
+entity roles {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(50) <<UQ>>
+}
+
+entity users {
+  * id : INT <<PK>>
+  --
+  * role_id : INT <<FK>>
+  * full_name : VARCHAR(100)
+  * email : VARCHAR(120) <<UQ>>
+  * password : VARCHAR(255)
+}
+
+entity films {
+  * id : INT <<PK>>
+  --
+  * title : VARCHAR(150)
+  description : TEXT
+  * duration : INT
+  release_date : DATE
+  * age_rating : VARCHAR(10)
+}
+
+entity genres {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(80) <<UQ>>
+}
+
+entity film_genres {
+  * id : INT <<PK>>
+  --
+  * film_id : INT <<FK>>
+  * genre_id : INT <<FK>>
+}
+
+entity halls {
+  * id : INT <<PK>>
+  --
+  * name : VARCHAR(50)
+  * capacity : INT
+}
+
+entity seats {
+  * id : INT <<PK>>
+  --
+  * hall_id : INT <<FK>>
+  * row_number : INT
+  * seat_number : INT
+}
+
+entity screenings {
+  * id : INT <<PK>>
+  --
+  * film_id : INT <<FK>>
+  * hall_id : INT <<FK>>
+  * start_time : DATETIME
+  * price : DECIMAL(10,2)
+}
+
+entity tickets {
+  * id : INT <<PK>>
+  --
+  * user_id : INT <<FK>>
+  * screening_id : INT <<FK>>
+  * seat_id : INT <<FK>>
+  * purchase_date : DATETIME
+  * status : VARCHAR(20)
+}
+
+roles ||--o{ users
+films ||--o{ film_genres
+genres ||--o{ film_genres
+halls ||--o{ seats
+films ||--o{ screenings
+halls ||--o{ screenings
+users ||--o{ tickets
+screenings ||--o{ tickets
+seats ||--o{ tickets
+
+@enduml
