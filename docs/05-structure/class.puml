@@ -1,0 +1,153 @@
+
+@startuml
+title CinemaTicket: Class Diagram
+skinparam classAttributeIconSize 0
+hide empty members
+
+package "Domain Model" {
+
+  class User <<entity>> {
+    +id: int
+    +fullName: string
+    +email: string
+    -password: string
+    +role: UserRole
+    +register(): void
+    +login(): bool
+  }
+
+  class Film <<entity>> {
+    +id: int
+    +title: string
+    +description: text
+    +genre: string
+    +duration: int
+    +releaseDate: date
+    +poster: string
+    +getDetails(): void
+  }
+
+  class Hall <<entity>> {
+    +id: int
+    +name: string
+    +capacity: int
+    +hallNumber: int
+  }
+
+  class Seat <<entity>> {
+    +id: int
+    +rowNumber: int
+    +seatNumber: int
+    +seatType: string
+  }
+
+  class Screening <<entity>> {
+    +id: int
+    +date: date
+    +startTime: time
+    +price: decimal
+    +status: string
+  }
+
+  class Ticket <<entity>> {
+    +id: int
+    +ticketNumber: string
+    +purchaseDate: datetime
+    +price: decimal
+    +status: TicketStatus
+    +generateTicket(): void
+  }
+
+  enum UserRole {
+    admin
+    customer
+  }
+
+  enum TicketStatus {
+    available
+    booked
+    paid
+    cancelled
+  }
+}
+
+Hall "1" *-- "1..*" Seat : contains
+Film "1" -- "0..*" Screening : has
+Hall "1" -- "0..*" Screening : hosts
+Screening "1" *-- "0..*" Ticket : includes
+User "1" -- "0..*" Ticket : purchases
+Seat "1" -- "0..*" Ticket : assigned to
+User ..> UserRole
+Ticket ..> TicketStatus
+
+package "Application (src/)" {
+
+  class AuthController {
+    +login(): void
+    +register(): void
+    +logout(): void
+  }
+
+  class FilmController {
+    +index(): void
+    +show(id: int): void
+    +store(): void
+    +update(id: int): void
+    +delete(id: int): void
+  }
+
+  class TicketController {
+    +selectScreening(): void
+    +selectSeat(): void
+    +purchase(): void
+    +cancel(id: int): void
+  }
+
+  class FilmRepository {
+    -db: Database
+    +findAll(): array
+    +findById(id: int): array
+    +create(data: array): int
+    +update(id: int, data: array): bool
+    +delete(id: int): bool
+  }
+
+  class ScreeningRepository {
+    -db: Database
+    +findByFilm(filmId: int): array
+    +findByDate(date: date): array
+  }
+
+  class TicketRepository {
+    -db: Database
+    +findById(id: int): array
+    +checkSeat(screeningId: int, seatId: int): bool
+    +create(data: array): int
+    +updateStatus(id: int, status: string): bool
+  }
+
+  class Database {
+    -connection: PDO
+    +connect(): PDO
+  }
+
+  class Auth {
+    +user(): ?array
+    +hasRole(role: string): bool
+  }
+}
+
+AuthController --> Auth
+FilmController --> FilmRepository
+TicketController --> TicketRepository
+TicketController --> ScreeningRepository
+TicketController --> Auth
+FilmRepository --> Database
+ScreeningRepository --> Database
+TicketRepository --> Database
+
+FilmRepository ..> Film : reads/writes
+ScreeningRepository ..> Screening : reads
+TicketRepository ..> Ticket : reads/writes
+
+@enduml

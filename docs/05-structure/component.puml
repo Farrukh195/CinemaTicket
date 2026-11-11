@@ -1,0 +1,61 @@
+
+@startuml
+title CinemaTicket: Component Diagram (MVC, Three Layers)
+
+skinparam componentStyle rectangle
+
+node "Client" {
+  [Browser\n(HTML, CSS, JavaScript)] as Browser
+}
+
+node "Web Server\n(Apache / XAMPP)" {
+
+  package "Presentation Layer" {
+    [public/index.php\n(Front Controller)] as Front
+    [Core/View] as View
+    [views/*.php\n(Templates)] as Templates
+  }
+
+  package "Business Logic Layer" {
+    [Core/Router] as Router
+    [Controllers\n(Auth, Film, Ticket, Admin)] as Controllers
+    [Core/Auth, Session,\nValidator] as Services
+  }
+
+  package "Data Access Layer" {
+    [Repositories\n(User, Film, Screening, Ticket)] as Repositories
+    [Core/Database\n(PDO)] as Database
+  }
+}
+
+database "MySQL / MariaDB\nCinemaTicket" as MySQL
+
+Browser --> Front : HTTP (GET / POST)
+Front --> Router : Request
+Router --> Controllers : Route dispatch
+
+Controllers --> Services : Authentication
+Controllers --> Repositories : Data requests
+Controllers --> View : Render page
+
+View --> Templates : Load templates
+
+Repositories --> Database : SQL queries
+Database --> MySQL : PDO / TCP 3306
+
+Browser ..> Front : AJAX / JSON
+
+legend right
+  MVC Architecture
+
+  Model = Repositories + Database
+  View = Core/View + views/*.php
+  Controller = Controllers (through Router)
+
+  Three Layers:
+  1. Presentation Layer
+  2. Business Logic Layer
+  3. Data Access Layer
+endlegend
+
+@enduml
